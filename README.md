@@ -182,6 +182,45 @@ Navigate to: `http://localhost:8080/index.html`
 
 ---
 
+## ⛩️ ThreeUI Component: `<KageLandingPage />`
+
+The authored **Kage temple experience** from ThreeUI is integrated byte-for-byte with its original navigation, scroll scenes, vermilion lanterns, and local Three.js world.
+
+### Configured Usage
+
+```tsx
+import { KageLandingPage } from "@designcodeio/threeui";
+import "@designcodeio/threeui/style.css";
+
+export function Scene() {
+  return (
+    <div className="shader-frame">
+      <KageLandingPage
+        headingFont="onest"
+        bodyFont="onest"
+        headingWeight="400"
+        bodyWeight="300"
+        primaryColor="#e0231c"
+        headingSize={46}
+        bodySize={17}
+        headingLetterSpacing={-0.012}
+      />
+    </div>
+  );
+}
+```
+
+### Verified Assets & Source Revision (`SHA-256 c8e06b90397a`)
+- **Component**: [`src/shaders/landing-pages/LandingPages.tsx`](src/shaders/landing-pages/LandingPages.tsx) (SHA-256 `4d379461ad00...`)
+- **Frame Controller**: [`src/shaders/landing-pages/LandingPageFrame.tsx`](src/shaders/landing-pages/LandingPageFrame.tsx) (SHA-256 `61de2cc508...`)
+- **Typography Recipe**: [`src/shaders/landing-pages/pageRecipes.ts`](src/shaders/landing-pages/pageRecipes.ts) (SHA-256 `c9d9849cc2...`)
+- **Canonical HTML**: [`public/landing-pages/kage.html`](public/landing-pages/kage.html) (SHA-256 `c8e06b90397a...`)
+- **Runtime & Fonts**: `three.min.js` (SHA-256 `8a5f7249...`) & `fonts.css` (SHA-256 `985f85a9...`)
+- **14 High-Res WebP Assets**: Sanmon gate, approach, lantern court, moonwater, pine trees, sakura branches, and basalt stones byte-verified.
+- **Interactive Live Preview**: [`http://localhost:8088/kage-preview.html`](kage-preview.html) (or click **⛩️ KAGE // TEMPLE** in the header).
+
+---
+
 ## 📄 License & Credits
 
 Built for rogue operators. All cognitive rights reserved. Released under the [MIT License](LICENSE).

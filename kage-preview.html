@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kage — Where stillness reveals the unseen [ThreeUI]</title>
+  <link rel="stylesheet" href="src/shaders/threeui.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #080808;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .shader-frame {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #080808;
+    }
+    .kage-iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #080808;
+    }
+    .nav-back {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(16, 19, 26, 0.9);
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      border-radius: 6px;
+      color: #00f0ff;
+      text-decoration: none;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s ease;
+    }
+    .nav-back:hover {
+      background: rgba(0, 240, 255, 0.25);
+      border-color: #00f0ff;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="nav-back">
+    <span>&larr; RETURN TO NEO-RUNNER</span>
+  </a>
+
+  <div class="shader-frame">
+    <iframe
+      id="kage-frame"
+      class="kage-iframe"
+      src="landing-pages/kage.html"
+      title="Kage — Where stillness reveals the unseen"
+      sandbox="allow-downloads allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+    ></iframe>
+  </div>
+
+  <script>
+    // Applied configured usage:
+    // headingFont="onest", bodyFont="onest", headingWeight="400", bodyWeight="300"
+    // primaryColor="#e0231c", headingSize=46, bodySize=17, headingLetterSpacing=-0.012
+    const frame = document.getElementById('kage-frame');
+    frame.addEventListener('load', () => {
+      try {
+        const doc = frame.contentDocument;
+        if (!doc) return;
+        const style = doc.createElement('style');
+        style.id = 'threeui-page-customization';
+        style.textContent = `
+          :root {
+            --vermilion: #e0231c;
+            --ember: #ff5a3c;
+          }
+          body { font-family: "Onest", system-ui, -apple-system, sans-serif; }
+          body, .body, .body-lg, .num { font-weight: 300; }
+          h1:not(.jp), h2:not(.jp), h3:not(.jp), .display:not(.jp) {
+            font-family: "Onest", system-ui, -apple-system, sans-serif;
+            font-weight: 400;
+          }
+          .display { letter-spacing: -0.012em; }
+          .h-hero { font-size: clamp(26px, 3.05vw, 46px); }
+          .h-sec { font-size: clamp(30px, 4vw, 60px); }
+          .body-lg { font-size: clamp(14px, 1.02vw, 17px); }
+          .body { font-size: 14px; }
+        `;
+        doc.head.appendChild(style);
+      } catch (e) {
+        console.warn('Frame customization note:', e);
+      }
+    });
+  </script>
+</body>
+</html>
