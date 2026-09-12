@@ -1,0 +1,121 @@
+/* Cyberpunk styling & visual FX */
+
+/* CRT Scanline & Glitch overlay */
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 3px, 6px 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.crt-active .crt-overlay {
+  opacity: 1;
+}
+
+.crt-active body {
+  text-shadow: 0 0 1px rgba(0, 240, 255, 0.4);
+}
+
+/* Neon glow helper utilities */
+.glow-primary {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
+}
+
+.glow-primary-lg {
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.55);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 15px rgba(223, 183, 255, 0.35);
+}
+
+.glow-tertiary {
+  box-shadow: 0 0 15px rgba(255, 186, 32, 0.35);
+}
+
+/* Cyber cut-corner borders */
+.cyber-panel {
+  position: relative;
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  background: rgba(29, 32, 39, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.cyber-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-top: 2px solid #00f0ff;
+  border-left: 2px solid #00f0ff;
+}
+
+.cyber-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  border-bottom: 2px solid #00f0ff;
+  border-right: 2px solid #00f0ff;
+}
+
+/* Sub-thread badge styles */
+.badge-focus {
+  background: rgba(0, 240, 255, 0.12);
+  color: #7df4ff;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+}
+
+.badge-bio {
+  background: rgba(255, 186, 32, 0.12);
+  color: #ffdea8;
+  border: 1px solid rgba(255, 186, 32, 0.3);
+}
+
+.badge-neural {
+  background: rgba(223, 183, 255, 0.12);
+  color: #f1daff;
+  border: 1px solid rgba(223, 183, 255, 0.3);
+}
+
+/* Glitch text effect on hover */
+@keyframes glitch-anim {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-hover:hover {
+  animation: glitch-anim 0.25s infinite;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #10131a;
+}
+::-webkit-scrollbar-thumb {
+  background: #32353d;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00f0ff;
+}

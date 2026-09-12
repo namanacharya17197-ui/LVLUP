@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>NEO-RUNNER // PROTOCOL</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+  
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+  </style>
+  <link rel="stylesheet" href="css/cyber-effects.css">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "error": "#ffb4ab",
+            "tertiary-fixed-dim": "#ffba20",
+            "secondary-fixed-dim": "#dfb7ff",
+            "secondary-container": "#9d05ff",
+            "on-secondary-fixed-variant": "#6b00b0",
+            "on-error-container": "#ffdad6",
+            "inverse-surface": "#e0e2ec",
+            "surface-container": "#1d2027",
+            "tertiary": "#fff4e8",
+            "on-surface-variant": "#b9cacb",
+            "surface-variant": "#32353d",
+            "primary-fixed-dim": "#00dbe9",
+            "surface-container-highest": "#32353d",
+            "surface-tint": "#00dbe9",
+            "tertiary-fixed": "#ffdea8",
+            "on-error": "#690005",
+            "primary-container": "#00f0ff",
+            "surface-container-low": "#191b23",
+            "on-tertiary-fixed": "#271900",
+            "error-container": "#93000a",
+            "tertiary-container": "#ffd386",
+            "on-background": "#e0e2ec",
+            "outline": "#849495",
+            "secondary": "#dfb7ff",
+            "on-secondary": "#4b007e",
+            "on-secondary-fixed": "#2d004f",
+            "on-primary": "#00363a",
+            "on-tertiary": "#412d00",
+            "on-surface": "#e0e2ec",
+            "on-primary-fixed-variant": "#004f54",
+            "on-tertiary-fixed-variant": "#5e4200",
+            "inverse-on-surface": "#2d3038",
+            "surface-container-high": "#272a32",
+            "primary": "#dbfcff",
+            "surface-bright": "#363941",
+            "on-secondary-container": "#f7e6ff",
+            "on-primary-fixed": "#002022",
+            "on-tertiary-container": "#7d5800",
+            "outline-variant": "#3b494b",
+            "secondary-fixed": "#f1daff",
+            "surface": "#10131a",
+            "on-primary-container": "#006970",
+            "primary-fixed": "#7df4ff",
+            "surface-dim": "#10131a",
+            "surface-container-lowest": "#0b0e15",
+            "inverse-primary": "#006970",
+            "background": "#10131a"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          spacing: {
+            "margin-desktop": "2rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2.5rem",
+            "space-md": "1rem",
+            "gutter-desktop": "1.5rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem"
+          },
+          fontFamily: {
+            "display-lg": ["Space Grotesk"],
+            "headline-lg": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "body-lg": ["JetBrains Mono"],
+            "display-lg-mobile": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "label-md": ["JetBrains Mono"],
+            "body-md": ["JetBrains Mono"],
+            "code-sm": ["JetBrains Mono"],
+            "label-lg": ["JetBrains Mono"]
+          },
+          fontSize: {
+            "display-lg": ["44px", { lineHeight: "48px", letterSpacing: "0.06em", fontWeight: "700" }],
+            "headline-lg": ["28px", { lineHeight: "34px", letterSpacing: "0.05em", fontWeight: "700" }],
+            "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "0.04em", fontWeight: "600" }],
+            "body-lg": ["15px", { lineHeight: "22px", letterSpacing: "-0.01em", fontWeight: "400" }],
+            "display-lg-mobile": ["32px", { lineHeight: "36px", letterSpacing: "0.05em", fontWeight: "700" }],
+            "headline-sm": ["18px", { lineHeight: "24px", letterSpacing: "0.03em", fontWeight: "600" }],
+            "label-md": ["11px", { lineHeight: "14px", letterSpacing: "0.1em", fontWeight: "500" }],
+            "body-md": ["13px", { lineHeight: "18px", letterSpacing: "0em", fontWeight: "400" }],
+            "code-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "400" }],
+            "label-lg": ["12px", { lineHeight: "16px", letterSpacing: "0.08em", fontWeight: "600" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-body-md text-body-md text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+  
+  <!-- Retro CRT Scanline Shader Layer -->
+  <div class="crt-overlay"></div>
+
+  <!-- Persistent Cyber Header -->
+  <header class="fixed top-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.8)] border-b border-outline-variant/30">
+    <div class="h-20 max-w-[1440px] mx-auto px-gutter-desktop flex items-center justify-between gap-space-md">
+      
+      <!-- Brand & Navigation -->
+      <div class="flex items-center gap-space-lg">
+        <div class="flex items-center gap-space-sm cursor-pointer" onclick="window.cyberApp.navigate('portal-intro')">
+          <img alt="NEO-RUNNER Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDna5B8bE4EmVFpShi4a4SXVoNda1CyyKXHY5tHsCbzSDwO3M1ER_9esxGZrPTll3A4bYoPrJIcB2EdG8JP5rg54oY3GxklqMNbCszcAvm4vQ_xgAQyJdho3pKZrQZwn-g0CbYFWxUwM4iWTsnR1GR3NFZrCoKBlCqZg-nM7aJOKkwmPL4plNCBsp2kG6ZODOB7zHRcsEZfrSW1E8oEG9ln9rHlTeV7XmgaiK8DKAXEdjiTb28GdLHU">
+          <div class="flex flex-col">
+            <span class="font-headline-sm text-headline-sm text-primary tracking-wider uppercase">NEO-RUNNER // PROTOCOL</span>
+            <span class="font-code-sm text-code-sm text-primary-fixed-dim uppercase tracking-widest flex items-center gap-space-xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+              SYS: ONLINE // PING: 12ms
+            </span>
+          </div>
+        </div>
+
+        <nav class="hidden xl:flex items-center gap-space-xs p-space-xs bg-surface-container-low rounded-DEFAULT border border-outline-variant/30">
+          <a class="px-space-md py-space-xs transition-all tracking-wider uppercase bg-primary-container text-on-primary-container font-headline-sm rounded-DEFAULT shadow-sm" data-path="portal-intro" href="#portal-intro" aria-current="page">PORTAL // INTRO</a>
+          <a class="px-space-md py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg tracking-wider uppercase" data-path="operations-hud" href="#operations-hud">OPERATIONS // HUD</a>
+          <a class="px-space-md py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg tracking-wider uppercase" data-path="black-market-bazaar" href="#black-market-bazaar">BLACK MARKET // BAZAAR</a>
+          <a class="px-space-md py-space-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg tracking-wider uppercase" data-path="dossier-records" href="#dossier-records">DOSSIER // RECORDS</a>
+        </nav>
+      </div>
+
+      <!-- Telemetry Counters & Controls -->
+      <div class="flex items-center gap-space-md">
+        <div class="hidden md:flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-xs rounded-DEFAULT border border-outline-variant/20">
+          <div class="flex flex-col">
+            <span class="font-code-sm text-code-sm text-on-surface-variant uppercase">CREDS</span>
+            <span id="header-creds" class="font-label-lg text-label-lg text-tertiary-fixed-dim font-bold">2,450 ₡</span>
+          </div>
+          <div class="w-px h-6 bg-surface-variant"></div>
+          <div class="flex flex-col">
+            <span class="font-code-sm text-code-sm text-on-surface-variant uppercase">STREAK</span>
+            <span id="header-streak" class="font-label-lg text-label-lg text-primary-fixed font-bold">14 DAYS</span>
+          </div>
+          <div class="w-px h-6 bg-surface-variant"></div>
+          <div class="flex flex-col">
+            <span class="font-code-sm text-code-sm text-on-surface-variant uppercase">XP TELEMETRY</span>
+            <span id="header-xp" class="font-label-lg text-label-lg text-secondary font-bold">8,420 KB</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-space-xs bg-surface-container-low px-space-xs py-space-xs rounded-DEFAULT border border-outline-variant/20">
+          <button id="audio-toggle-btn" class="p-space-xs text-primary-container hover:bg-surface-container transition-colors" title="Toggle Procedural Audio Engine" type="button">
+            <span class="material-symbols-outlined text-[18px]">volume_up</span>
+          </button>
+          <button id="shader-toggle-btn" class="p-space-xs text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Toggle CRT Glitch Shaders" type="button">
+            <span class="material-symbols-outlined text-[18px]">terminal</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-space-sm pl-space-xs cursor-pointer" onclick="window.cyberApp.navigate('dossier-records')">
+          <div class="flex flex-col text-right hidden sm:flex">
+            <span class="font-label-lg text-label-lg text-primary font-bold tracking-wider">CYBER_NOMAD</span>
+            <span id="header-tier" class="font-code-sm text-code-sm text-tertiary-fixed-dim tracking-widest uppercase font-bold">TIER 04</span>
+          </div>
+          <img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-primary/60 shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD183awqQ_GCZtP5O8NMYZ3y_QQPNgJlks74_JjLIVTXp-qBKHnRQgvZlcaU41KlMiBfNHj9IzMLap-mcPtaoOrisLoGeSdk1RD-kXrRfXqa2pIllAIdAC6s5fQS-fbDF2X8W3GcO-ZpF-OZwcRLkiLaQpQsyGK1MVNFLjzVf93w6TYKRsndMIjMcr_8dU5jVfqe1_fvS4uXA_G_g3SA7XwS0wmobsJwcNUT6tv4t8wOLPhkT2FfW_C">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Render Canvas -->
+  <main id="view-container" class="w-full pt-20 bg-background max-w-[1440px] mx-auto px-gutter-desktop min-h-[calc(100vh-5rem)]">
+    <!-- Active view content will be injected dynamically -->
+  </main>
+
+  <!-- Interactive Terminal CLI Modal -->
+  <div id="terminal-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="w-full max-w-3xl bg-surface-container-lowest border border-primary/40 rounded-xl shadow-[0_0_50px_rgba(0,240,255,0.3)] overflow-hidden flex flex-col h-[520px]">
+      <div class="flex items-center justify-between px-space-md py-space-xs bg-surface-container border-b border-outline-variant/30">
+        <div class="flex items-center gap-space-xs font-code-sm text-code-sm text-primary">
+          <span class="material-symbols-outlined text-[18px]">terminal</span>
+          <span>NEO-RUNNER // CYBERDECK SHELL [TTY_08]</span>
+        </div>
+        <button onclick="window.cyberTerminal.close()" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div id="terminal-output" class="flex-1 p-space-md overflow-y-auto font-mono text-xs space-y-1 bg-black/60">
+        <div class="text-primary font-bold">NEO-RUNNER PROTOCOL TELEMETRY CONSOLE v9.2.1</div>
+        <div class="text-on-surface-variant">Connected to secure wetware host interface. Type <span class="text-primary-container font-bold">'help'</span> for instructions.</div>
+        <div class="text-outline-variant">------------------------------------------------------------</div>
+      </div>
+
+      <div class="p-space-sm bg-surface-container-low border-t border-outline-variant/30 flex items-center gap-space-sm">
+        <span class="text-primary-container font-mono text-sm font-bold">></span>
+        <input id="terminal-input" type="text" autocomplete="off" placeholder="execute protocol command..." class="flex-1 bg-transparent border-none outline-none text-primary font-mono text-sm placeholder-on-surface-variant/40">
+        <button onclick="const input = document.getElementById('terminal-input'); if (input.value) { window.cyberTerminal.execute(input.value); input.value = ''; }" class="px-space-sm py-1 bg-primary-container text-on-primary-container font-code-sm text-xs rounded uppercase font-bold">
+          RUN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contract Injection Modal -->
+  <div id="contract-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-surface-container-low border border-primary/40 rounded-xl shadow-[0_0_40px_rgba(0,240,255,0.25)] p-space-lg flex flex-col gap-space-md">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-xs">
+        <div class="flex items-center gap-space-xs font-headline-sm text-headline-sm text-primary uppercase">
+          <span class="material-symbols-outlined text-primary-container text-[22px]">add_task</span>
+          INJECT PROTOCOL CONTRACT
+        </div>
+        <button onclick="window.cyberApp.closeNewContractModal()" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="contract-form" onsubmit="window.cyberApp.submitNewContract(event)" class="flex flex-col gap-space-md">
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">CONTRACT DIRECTIVE / TITLE</label>
+          <input id="contract-title-input" required placeholder="e.g. MASTER RUST MEMORY SAFETY // 60M" class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+        </div>
+
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">SUB-THREAD SPECIFIER</label>
+          <input id="contract-thread-input" required placeholder="e.g. COGNITIVE BUFFER // ARCHITECTURE" class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+        </div>
+
+        <div class="grid grid-cols-3 gap-space-sm">
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">TYPE</label>
+            <select id="contract-type-select" class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+              <option value="focus">FOCUS</option>
+              <option value="bio">BIO</option>
+              <option value="neural">NEURAL</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">CREDS (₡)</label>
+            <input id="contract-creds-input" type="number" value="200" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+          </div>
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">XP (KB)</label>
+            <input id="contract-xp-input" type="number" value="300" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-space-sm pt-space-sm border-t border-outline-variant/20 mt-2">
+          <button type="button" onclick="window.cyberApp.closeNewContractModal()" class="px-space-md py-space-xs bg-surface-container-high text-on-surface hover:text-primary rounded font-code-sm text-code-sm uppercase">
+            CANCEL
+          </button>
+          <button type="submit" class="px-space-lg py-space-xs bg-primary-container text-on-primary-container rounded font-headline-sm text-headline-sm uppercase hover:bg-primary-fixed active:scale-95">
+            INJECT DIRECTIVE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Persistent Cyber Footer -->
+  <footer class="w-full bg-surface-container-lowest py-space-lg border-t border-outline-variant/20">
+    <div class="max-w-[1440px] mx-auto px-gutter-desktop flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-code-sm text-code-sm tracking-widest uppercase">
+      <div class="flex items-center gap-space-sm">
+        <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+        <span>TERMINAL_NODE: 0x88F-SEC // ENCRYPTION: ACTIVE</span>
+      </div>
+      <div>© 2184 NEO-RUNNER // PROTOCOL. ALL COGNITIVE RIGHTS RESERVED.</div>
+      <div class="flex items-center gap-space-md">
+        <span onclick="window.cyberTerminal.open()" class="text-primary-fixed-dim hover:text-primary transition-colors cursor-pointer">NET_DIAGNOSTICS</span>
+        <span class="text-on-surface-variant">|</span>
+        <span onclick="window.cyberApp.navigate('dossier-records')" class="text-primary-fixed-dim hover:text-primary transition-colors cursor-pointer">NEURAL_CLEARANCE</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Script Pipeline -->
+  <script src="js/audio.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/views/portal.js"></script>
+  <script src="js/views/hud.js"></script>
+  <script src="js/views/bazaar.js"></script>
+  <script src="js/views/dossier.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
