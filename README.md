@@ -15,6 +15,7 @@
 [![Database: Supabase](https://img.shields.io/badge/DATABASE-SUPABASE%20POSTGRES-3ecf8e?style=for-the-badge&logo=supabase&logoColor=white)](https://github.com/namanacharya17197-ui/LVLUP)
 [![Audio: WebAudio API](https://img.shields.io/badge/AUDIO-PROCEDURAL%20SYNTH-dfb7ff?style=for-the-badge&logo=soundcharts&logoColor=black)](https://github.com/namanacharya17197-ui/LVLUP)
 [![UI: Tailwind CSS](https://img.shields.io/badge/STACK-TAILWIND%20%2B%20VANILLA%20JS-ffba20?style=for-the-badge&logo=tailwindcss&logoColor=black)](https://github.com/namanacharya17197-ui/LVLUP)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnamanacharya17197-ui%2FLVLUP)
 
 </div>
 
@@ -179,6 +180,12 @@ Navigate to: `http://localhost:8080/index.html`
 4. Enter your `Project URL` and `Anon / Public Key`, then click **CONNECT & SYNC**.
 
 *Note: If no Supabase credentials are provided, the application runs automatically on high-performance local cache mode (`localStorage`).*
+
+### 3. Deploy to Vercel (1-Click)
+Deploy the live application to Vercel with zero setup:
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnamanacharya17197-ui%2FLVLUP)
+
+Or import directly in your [Vercel Dashboard](https://vercel.com/new) -> Select `namanacharya17197-ui/LVLUP` -> Click **Deploy**.
 
 ---
 
