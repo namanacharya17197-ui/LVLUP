@@ -1,6 +1,6 @@
 /**
  * NEO-RUNNER // STATE STORE
- * Reactive state management with local persistence and subscriber updates.
+ * Reactive state management with local persistence and Supabase cloud synchronization.
  */
 
 const DEFAULT_STATE = {
@@ -160,8 +160,81 @@ class Store {
     this.listeners.forEach(fn => fn(this.state));
   }
 
-  // State actions
-  toggleContract(id) {
+  /**
+   * Sync initial data with Supabase if online
+   */
+  async syncWithSupabase() {
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      const remoteTasks = await window.cyberSupabase.fetchTasks();
+      if (remoteTasks && remoteTasks.length > 0) {
+        this.state.contracts = remoteTasks;
+        this.save();
+        this.addLog('CLOUD SYNC: Synced directives from Supabase.');
+      }
+    }
+  }
+
+  // ======================================================================
+  // TASK CRUD OPERATIONS
+  // ======================================================================
+
+  /**
+   * CREATE Task
+   */
+  async addContract({ title, subthread, type, rewardCreds, rewardXp }) {
+    const newContract = {
+      id: 'cnt-' + Date.now().toString(36),
+      title: (title || 'CUSTOM PROTOCOL').toUpperCase(),
+      subthread: (subthread || 'USER DIRECTIVE // THREAD-X').toUpperCase(),
+      type: type || 'focus',
+      rewardCreds: Number(rewardCreds) || 150,
+      rewardXp: Number(rewardXp) || 200,
+      completed: false,
+      completedAt: null
+    };
+    this.state.contracts.unshift(newContract);
+    this.addLog(`NEW DIRECTIVE INJECTED: ${newContract.title}`);
+    this.save();
+    if (window.cyberAudio) window.cyberAudio.playChirp();
+
+    // Sync to Supabase cloud if connected
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      const cloudTask = await window.cyberSupabase.createTask(newContract);
+      if (cloudTask && cloudTask.id) {
+        newContract.id = cloudTask.id;
+        this.save();
+      }
+    }
+    return newContract;
+  }
+
+  /**
+   * UPDATE Task (Edit fields)
+   */
+  async updateContract(id, updates) {
+    const contract = this.state.contracts.find(c => c.id === id);
+    if (!contract) return null;
+
+    if (updates.title) contract.title = updates.title.toUpperCase();
+    if (updates.subthread) contract.subthread = updates.subthread.toUpperCase();
+    if (updates.type) contract.type = updates.type;
+    if (updates.rewardCreds !== undefined) contract.rewardCreds = Number(updates.rewardCreds);
+    if (updates.rewardXp !== undefined) contract.rewardXp = Number(updates.rewardXp);
+
+    this.addLog(`DIRECTIVE RECONFIGURED: ${contract.title}`);
+    this.save();
+    if (window.cyberAudio) window.cyberAudio.playClick();
+
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      await window.cyberSupabase.updateTask(id, updates);
+    }
+    return contract;
+  }
+
+  /**
+   * UPDATE Task (Toggle Completion)
+   */
+  async toggleContract(id) {
     const contract = this.state.contracts.find(c => c.id === id);
     if (!contract) return null;
 
@@ -182,32 +255,35 @@ class Store {
       if (window.cyberAudio) window.cyberAudio.playClick();
     }
     this.save();
+
+    // Push task & user updates to Supabase
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      window.cyberSupabase.updateTask(id, {
+        completed: contract.completed,
+        completedAt: contract.completedAt
+      });
+      window.cyberSupabase.syncUser(this.state);
+    }
     return contract;
   }
 
-  addContract({ title, subthread, type, rewardCreds, rewardXp }) {
-    const newContract = {
-      id: 'cnt-' + Date.now().toString(36),
-      title: (title || 'CUSTOM PROTOCOL').toUpperCase(),
-      subthread: (subthread || 'USER DIRECTIVE // THREAD-X').toUpperCase(),
-      type: type || 'focus',
-      rewardCreds: Number(rewardCreds) || 150,
-      rewardXp: Number(rewardXp) || 200,
-      completed: false,
-      completedAt: null
-    };
-    this.state.contracts.unshift(newContract);
-    this.addLog(`NEW DIRECTIVE INJECTED: ${newContract.title}`);
-    this.save();
-    if (window.cyberAudio) window.cyberAudio.playChirp();
-    return newContract;
-  }
-
-  deleteContract(id) {
+  /**
+   * DELETE Task
+   */
+  async deleteContract(id) {
     this.state.contracts = this.state.contracts.filter(c => c.id !== id);
     this.addLog(`CONTRACT PURGED: ${id}`);
     this.save();
+    if (window.cyberAudio) window.cyberAudio.playClick();
+
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      window.cyberSupabase.deleteTask(id);
+    }
   }
+
+  // ======================================================================
+  // ARSENAL & CHARACTER ATTRIBUTES
+  // ======================================================================
 
   buyItem(itemId) {
     const item = this.state.bazaarItems.find(i => i.id === itemId);
@@ -236,14 +312,29 @@ class Store {
     this.addLog(`ARSENAL RECONFIGURED: Equipped ${item.name} in slot [${item.slot.toUpperCase()}]`);
     this.save();
     if (window.cyberAudio) window.cyberAudio.playClick();
+
+    if (window.cyberSupabase && window.cyberSupabase.isConnected) {
+      window.cyberSupabase.syncAttributes(this.state.equipped, this.state.inventory, this.getCalculatedStats());
+      window.cyberSupabase.syncUser(this.state);
+    }
+  }
+
+  getCalculatedStats() {
+    let intMod = 0;
+    let strBuffer = 0;
+    let overclockPct = 0;
+    Object.values(this.state.equipped).forEach(itemId => {
+      if (!itemId) return;
+      const item = this.state.bazaarItems.find(i => i.id === itemId);
+      if (!item) return;
+      intMod += parseInt(item.intMod) || 0;
+      strBuffer += parseInt(item.strBuffer) || 0;
+      overclockPct += parseFloat(item.overclock) || 0;
+    });
+    return { intMod, strBuffer, overclockPct };
   }
 
   updateTier() {
-    // 0 - 2000: Tier 1
-    // 2001 - 5000: Tier 2
-    // 5001 - 8000: Tier 3
-    // 8001 - 12000: Tier 4
-    // 12001+: Tier 5
     let newTier = 1;
     if (this.state.xp >= 12000) newTier = 5;
     else if (this.state.xp >= 8000) newTier = 4;
@@ -251,7 +342,6 @@ class Store {
     else if (this.state.xp >= 2000) newTier = 2;
 
     if (newTier !== this.state.tier) {
-      const prev = this.state.tier;
       this.state.tier = newTier;
       this.addLog(`PROMOTION: ELEVATED TO CLEARANCE TIER 0${newTier}`);
       if (window.cyberAudio) window.cyberAudio.playBountyClaim();

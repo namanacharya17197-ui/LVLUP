@@ -27,6 +27,10 @@
   </style>
   <link rel="stylesheet" href="css/cyber-effects.css">
   
+  <!-- Supabase JS Client (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Tailwind CSS CDN & Custom Tokens -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script id="tailwind-config">
     tailwind.config = {
@@ -158,8 +162,14 @@
         </nav>
       </div>
 
-      <!-- Telemetry Counters & Controls -->
+      <!-- Telemetry Counters, Cloud Status & Controls -->
       <div class="flex items-center gap-space-md">
+        <!-- Supabase Cloud DB Status Indicator -->
+        <button id="supabase-status-badge" onclick="window.cyberApp.openSupabaseModal()" class="hidden sm:flex items-center gap-1.5 px-space-sm py-0.5 rounded font-code-sm text-xs bg-surface-container text-on-surface-variant border border-outline-variant/30 cursor-pointer hover:text-primary transition-all">
+          <span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+          <span>DB: LOCAL CACHE</span>
+        </button>
+
         <div class="hidden md:flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-xs rounded-DEFAULT border border-outline-variant/20">
           <div class="flex flex-col">
             <span class="font-code-sm text-code-sm text-on-surface-variant uppercase">CREDS</span>
@@ -231,7 +241,7 @@
     </div>
   </div>
 
-  <!-- Contract Injection Modal -->
+  <!-- Contract Injection Modal (CREATE) -->
   <div id="contract-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
     <div class="w-full max-w-lg bg-surface-container-low border border-primary/40 rounded-xl shadow-[0_0_40px_rgba(0,240,255,0.25)] p-space-lg flex flex-col gap-space-md">
       <div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-xs">
@@ -286,6 +296,111 @@
     </div>
   </div>
 
+  <!-- Contract Edit Modal (UPDATE) -->
+  <div id="edit-contract-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-surface-container-low border border-secondary/40 rounded-xl shadow-[0_0_40px_rgba(223,183,255,0.25)] p-space-lg flex flex-col gap-space-md">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-xs">
+        <div class="flex items-center gap-space-xs font-headline-sm text-headline-sm text-secondary uppercase">
+          <span class="material-symbols-outlined text-secondary text-[22px]">edit_note</span>
+          RECONFIGURE PROTOCOL CONTRACT
+        </div>
+        <button onclick="window.cyberApp.closeEditContractModal()" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="edit-contract-form" onsubmit="window.cyberApp.submitEditContract(event)" class="flex flex-col gap-space-md">
+        <input type="hidden" id="edit-contract-id">
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">CONTRACT DIRECTIVE / TITLE</label>
+          <input id="edit-contract-title-input" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-secondary">
+        </div>
+
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">SUB-THREAD SPECIFIER</label>
+          <input id="edit-contract-thread-input" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-secondary">
+        </div>
+
+        <div class="grid grid-cols-3 gap-space-sm">
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">TYPE</label>
+            <select id="edit-contract-type-select" class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-secondary">
+              <option value="focus">FOCUS</option>
+              <option value="bio">BIO</option>
+              <option value="neural">NEURAL</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">CREDS (₡)</label>
+            <input id="edit-contract-creds-input" type="number" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-secondary">
+          </div>
+          <div>
+            <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">XP (KB)</label>
+            <input id="edit-contract-xp-input" type="number" required class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-secondary">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-space-sm pt-space-sm border-t border-outline-variant/20 mt-2">
+          <button type="button" onclick="window.cyberApp.closeEditContractModal()" class="px-space-md py-space-xs bg-surface-container-high text-on-surface hover:text-primary rounded font-code-sm text-code-sm uppercase">
+            CANCEL
+          </button>
+          <button type="submit" class="px-space-lg py-space-xs bg-secondary text-on-secondary rounded font-headline-sm text-headline-sm uppercase hover:opacity-90 active:scale-95">
+            UPDATE DIRECTIVE
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Supabase Cloud Uplink Modal -->
+  <div id="supabase-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-surface-container-low border border-primary/40 rounded-xl shadow-[0_0_50px_rgba(0,240,255,0.3)] p-space-lg flex flex-col gap-space-md">
+      <div class="flex items-center justify-between border-b border-outline-variant/30 pb-space-xs">
+        <div class="flex items-center gap-space-xs font-headline-sm text-headline-sm text-primary uppercase">
+          <span class="material-symbols-outlined text-primary-container text-[22px]">cloud_sync</span>
+          SUPABASE CLOUD DATABASE UPLINK
+        </div>
+        <button onclick="window.cyberApp.closeSupabaseModal()" class="text-on-surface-variant hover:text-error">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <p class="font-body-md text-body-md text-on-surface-variant">
+        Connect your project to Supabase PostgreSQL database to persist Users, Tasks, and Character Attributes in real time.
+      </p>
+
+      <form id="supabase-config-form" onsubmit="window.cyberApp.submitSupabaseConfig(event)" class="flex flex-col gap-space-md">
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">SUPABASE PROJECT URL</label>
+          <input id="supabase-url-input" placeholder="https://xyzproject.supabase.co" class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+        </div>
+
+        <div>
+          <label class="block font-code-sm text-code-sm text-on-surface-variant uppercase mb-1">SUPABASE ANON / PUBLIC KEY</label>
+          <input id="supabase-key-input" type="password" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded p-space-sm text-primary font-code-sm text-code-sm outline-none focus:border-primary-container">
+        </div>
+
+        <div id="supabase-modal-status" class="font-code-sm text-xs text-on-surface-variant">
+          // Run <code>supabase/schema.sql</code> in your Supabase SQL Editor first.
+        </div>
+
+        <div class="flex justify-between items-center pt-space-sm border-t border-outline-variant/20 mt-2">
+          <button type="button" onclick="window.cyberApp.disconnectSupabase()" class="px-space-md py-space-xs text-error hover:bg-error/10 rounded font-code-sm text-code-sm uppercase transition-colors">
+            DISCONNECT
+          </button>
+          <div class="flex gap-space-sm">
+            <button type="button" onclick="window.cyberApp.closeSupabaseModal()" class="px-space-md py-space-xs bg-surface-container-high text-on-surface hover:text-primary rounded font-code-sm text-code-sm uppercase">
+              CANCEL
+            </button>
+            <button type="submit" class="px-space-lg py-space-xs bg-primary-container text-on-primary-container rounded font-headline-sm text-headline-sm uppercase hover:bg-primary-fixed active:scale-95">
+              CONNECT & SYNC
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Persistent Cyber Footer -->
   <footer class="w-full bg-surface-container-lowest py-space-lg border-t border-outline-variant/20">
     <div class="max-w-[1440px] mx-auto px-gutter-desktop flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant font-code-sm text-code-sm tracking-widest uppercase">
@@ -304,6 +419,7 @@
 
   <!-- Application Script Pipeline -->
   <script src="js/audio.js"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/store.js"></script>
   <script src="js/terminal.js"></script>
   <script src="js/views/portal.js"></script>

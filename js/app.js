@@ -9,9 +9,15 @@ class CyberApp {
     this.mainContainer = null;
   }
 
-  init() {
+  async init() {
     this.mainContainer = document.getElementById('view-container');
     
+    // Initialize Supabase service if credentials exist
+    if (window.cyberSupabase) {
+      await window.cyberSupabase.init();
+      await window.cyberStore.syncWithSupabase();
+    }
+
     // Subscribe to store updates to keep UI synchronized
     window.cyberStore.subscribe(() => {
       this.updateHeaderTelemetry();
@@ -55,7 +61,7 @@ class CyberApp {
     }
 
     this.updateHeaderTelemetry();
-    window.cyberTerminal.init();
+    if (window.cyberTerminal) window.cyberTerminal.init();
   }
 
   updateAudioButtonUI(btn) {
@@ -106,6 +112,10 @@ class CyberApp {
       default:
         this.mainContainer.innerHTML = renderPortalView();
     }
+
+    if (window.cyberSupabase) {
+      window.cyberSupabase.updateStatusBadge();
+    }
   }
 
   updateHeaderTelemetry() {
@@ -119,9 +129,16 @@ class CyberApp {
     if (streakEl) streakEl.innerText = `${s.streak} DAYS`;
     if (xpEl) xpEl.innerText = `${s.xp.toLocaleString()} KB`;
     if (tierEl) tierEl.innerText = `TIER 0${s.tier}`;
+
+    if (window.cyberSupabase) {
+      window.cyberSupabase.updateStatusBadge();
+    }
   }
 
-  // Contract Injection Modal
+  // ======================================================================
+  // CONTRACT MODALS: CREATE & UPDATE
+  // ======================================================================
+
   openNewContractModal() {
     const modal = document.getElementById('contract-modal');
     if (modal) {
@@ -142,7 +159,7 @@ class CyberApp {
     }
   }
 
-  submitNewContract(e) {
+  async submitNewContract(e) {
     e.preventDefault();
     const title = document.getElementById('contract-title-input').value;
     const subthread = document.getElementById('contract-thread-input').value;
@@ -150,7 +167,7 @@ class CyberApp {
     const creds = document.getElementById('contract-creds-input').value;
     const xp = document.getElementById('contract-xp-input').value;
 
-    window.cyberStore.addContract({
+    await window.cyberStore.addContract({
       title,
       subthread,
       type,
@@ -160,7 +177,127 @@ class CyberApp {
 
     this.closeNewContractModal();
     document.getElementById('contract-form').reset();
+    this.renderCurrentView();
   }
+
+  openEditContractModal(id) {
+    const contract = window.cyberStore.state.contracts.find(c => c.id === id);
+    if (!contract) return;
+
+    const modal = document.getElementById('edit-contract-modal');
+    if (!modal) return;
+
+    document.getElementById('edit-contract-id').value = contract.id;
+    document.getElementById('edit-contract-title-input').value = contract.title;
+    document.getElementById('edit-contract-thread-input').value = contract.subthread;
+    document.getElementById('edit-contract-type-select').value = contract.type;
+    document.getElementById('edit-contract-creds-input').value = contract.rewardCreds;
+    document.getElementById('edit-contract-xp-input').value = contract.rewardXp;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (window.cyberAudio) window.cyberAudio.playChirp();
+  }
+
+  closeEditContractModal() {
+    const modal = document.getElementById('edit-contract-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      if (window.cyberAudio) window.cyberAudio.playClick();
+    }
+  }
+
+  async submitEditContract(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-contract-id').value;
+    const title = document.getElementById('edit-contract-title-input').value;
+    const subthread = document.getElementById('edit-contract-thread-input').value;
+    const type = document.getElementById('edit-contract-type-select').value;
+    const creds = document.getElementById('edit-contract-creds-input').value;
+    const xp = document.getElementById('edit-contract-xp-input').value;
+
+    await window.cyberStore.updateContract(id, {
+      title,
+      subthread,
+      type,
+      rewardCreds: creds,
+      rewardXp: xp
+    });
+
+    this.closeEditContractModal();
+    this.renderCurrentView();
+  }
+
+  // ======================================================================
+  // SUPABASE CONFIG MODAL
+  // ======================================================================
+
+  openSupabaseModal() {
+    const modal = document.getElementById('supabase-modal');
+    if (!modal) return;
+
+    const urlInput = document.getElementById('supabase-url-input');
+    const keyInput = document.getElementById('supabase-key-input');
+    if (urlInput) urlInput.value = window.cyberSupabase.url;
+    if (keyInput) keyInput.value = window.cyberSupabase.anonKey;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (window.cyberAudio) window.cyberAudio.playChirp();
+  }
+
+  closeSupabaseModal() {
+    const modal = document.getElementById('supabase-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      if (window.cyberAudio) window.cyberAudio.playClick();
+    }
+  }
+
+  async submitSupabaseConfig(e) {
+    e.preventDefault();
+    const url = document.getElementById('supabase-url-input').value.trim();
+    const key = document.getElementById('supabase-key-input').value.trim();
+
+    const statusEl = document.getElementById('supabase-modal-status');
+    if (statusEl) {
+      statusEl.innerText = '// Testing cloud uplink...';
+      statusEl.className = 'font-code-sm text-xs text-primary-fixed-dim';
+    }
+
+    const res = await window.cyberSupabase.configure(url, key);
+    if (res.success) {
+      if (statusEl) {
+        statusEl.innerText = '// SUPABASE CLOUD UPLINK ONLINE!';
+        statusEl.className = 'font-code-sm text-xs text-primary-container font-bold';
+      }
+      await window.cyberStore.syncWithSupabase();
+      setTimeout(() => {
+        this.closeSupabaseModal();
+        this.renderCurrentView();
+      }, 700);
+    } else {
+      if (statusEl) {
+        statusEl.innerText = `// UPLINK FAILED: ${res.error}`;
+        statusEl.className = 'font-code-sm text-xs text-error font-bold';
+      }
+      if (window.cyberAudio) window.cyberAudio.playGlitch();
+    }
+  }
+
+  disconnectSupabase() {
+    if (confirm('Disconnect from Supabase cloud database and revert to local storage?')) {
+      window.cyberSupabase.disconnect();
+      this.closeSupabaseModal();
+      this.renderCurrentView();
+    }
+  }
+
+  // ======================================================================
+  // ARSENAL & DATA OPERATIONS
+  // ======================================================================
 
   purchaseItem(itemId) {
     const res = window.cyberStore.buyItem(itemId);

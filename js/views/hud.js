@@ -118,6 +118,10 @@ function renderHudView() {
         </div>
 
         <div class="flex items-center gap-space-sm">
+          <button onclick="window.cyberApp.openSupabaseModal()" class="px-space-sm py-space-xs bg-surface-container hover:bg-surface-container-high text-primary-fixed-dim font-code-sm text-code-sm uppercase rounded border border-outline-variant/30 flex items-center gap-space-xs transition-colors">
+            <span class="material-symbols-outlined text-[16px]">cloud_sync</span>
+            SUPABASE UPLINK
+          </button>
           <button onclick="window.cyberApp.openNewContractModal()" class="px-space-md py-space-xs bg-primary-container text-on-primary-container font-headline-sm text-headline-sm uppercase rounded-DEFAULT transition-all hover:bg-primary-fixed flex items-center gap-space-xs active:scale-95 shadow-md">
             <span class="material-symbols-outlined text-[18px]">add_task</span>
             INJECT BOUNTY
@@ -179,7 +183,10 @@ function renderHudView() {
                   <span class="px-space-sm py-space-xs rounded bg-surface-container-lowest font-code-sm text-code-sm ${c.completed ? 'text-primary-container' : 'text-tertiary-fixed-dim font-bold'}">
                     ${c.completed ? 'HARVESTED' : `+${c.rewardCreds} ₡`}
                   </span>
-                  <button onclick="window.cyberStore.deleteContract('${c.id}')" title="Purge directive" class="p-space-xs text-on-surface-variant hover:text-error transition-colors rounded">
+                  <button onclick="event.stopPropagation(); window.cyberApp.openEditContractModal('${c.id}')" title="Edit directive" class="p-space-xs text-on-surface-variant hover:text-primary transition-colors rounded">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="event.stopPropagation(); window.cyberStore.deleteContract('${c.id}')" title="Purge directive" class="p-space-xs text-on-surface-variant hover:text-error transition-colors rounded">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </div>
